@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15.15-trixie
+    container_name: stengg-test-db
+    environment:
+      - POSTGRES_DB=stengg_db
+      - POSTGRES_USER=stengg_user
+      - POSTGRES_PASSWORD=stengg_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - stengg-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stengg_user -d stengg_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./STEngg_Test_API
+      dockerfile: STEngg_Test_API/Dockerfile
+    container_name: stengg-test-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=stengg_db;Username=stengg_user;Password=stengg_password
+    ports:
+      - "8080:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - stengg-network
+
+  ui:
+    build:
+      context: .
+      dockerfile: STEngg_Test_UI/Dockerfile
+      args:
+        NEXT_PUBLIC_API_HOST: http://localhost:8080
+    container_name: stengg-test-ui
+    environment:
+      - NEXT_PUBLIC_API_HOST=http://localhost:8080
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - stengg-network
+
+volumes:
+  postgres_data:
+
+networks:
+  stengg-network:
+    driver: bridge
