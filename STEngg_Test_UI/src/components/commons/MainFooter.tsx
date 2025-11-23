@@ -1,85 +1,109 @@
 'use client'
 
-// ** MUI Imports
-import { darken, IconButton, Link, Stack, Typography } from '@mui/material'
+// ** Next & React Imports
+import Link from 'next/link'
 
-// ** Third Party Imports
-import { Icon } from '@iconify/react'
+// ** MUI Imports
+import {
+  Inventory2 as InventoryIcon
+} from '@mui/icons-material'
+import { Box, Stack, Typography } from '@mui/material'
 
 // ** Constant Imports
-import { ROUTES } from '@/constants/routes'
 import { colors } from '@/constants/color'
-
-// ** Custom Component Imports
-import CustomImage from './CustomImage'
+import { ROUTES } from '@/constants/routes'
 
 const MainFooter = () => {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <Stack
+    <Box
       component="footer"
-      alignItems="center"
-      spacing={6}
-      width="100%"
-      position="relative"
       sx={{
         backgroundColor: colors.darkBlue,
         color: colors.white,
-        py: 12,
+        mt: 'auto',
       }}
     >
-      <Link href={ROUTES.ROOT} title="Snowkiting in Norway">
-        <CustomImage
-          src=""
-          alt="Logo"
-          width={87}
-          height={80}
-          style={{ cursor: 'pointer' }}
-        />
-      </Link>
-
-      <Typography variant="body1" sx={{ fontSize: '24px', fontWeight: 600 }}>
-        sample@sample.com
-      </Typography>
-
-      <Typography variant="body1" sx={{ fontSize: '24px', fontWeight: 600 }}>
-        +84 123 456 789
-      </Typography>
-
-      <Stack alignItems="center" spacing={3}>
-        <Typography variant="body1" sx={{ fontSize: '16px', fontWeight: 400 }}>
-          Connect with us:
-        </Typography>
-      </Stack>
-
-      <Stack alignItems="center">
-        <Typography variant="body1" sx={{ fontSize: '16px', fontWeight: 400 }}>
-          Copyright &copy; 2025 Test
-        </Typography>
-        <Typography variant="body1" sx={{ fontSize: '16px', fontWeight: 400 }}>
-          All rights reserved.
-        </Typography>
-      </Stack>
-
-      <IconButton
-        onClick={() => {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          })
-        }}
+      <Box
         sx={{
-          position: 'absolute',
-          bottom: '30px',
-          right: '30px',
-          backgroundColor: colors.red,
-          '&:hover': {
-            backgroundColor: darken(colors.red, 0.1),
-          },
+          maxWidth: '1400px',
+          mx: 'auto',
+          px: { xs: 3, md: 6 },
+          py: { xs: 4, md: 6 },
         }}
       >
-        <Icon icon="iconamoon:arrow-up-2-light" color={colors.white} />
-      </IconButton>
-    </Stack>
+        <Stack spacing={4}>
+          {/* Main Footer Content */}
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            spacing={4}
+            justifyContent="space-between"
+            alignItems={{ xs: 'flex-start', md: 'center' }}
+          >
+            {/* Brand Section */}
+            <Stack spacing={2} sx={{ flex: { md: '0 0 300px' } }}>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <InventoryIcon sx={{ fontSize: 32, color: colors.blue }} />
+                <Typography variant="h6" fontWeight="bold">
+                  Product Manager
+                </Typography>
+              </Stack>
+              <Typography variant="body2" color="rgba(255, 255, 255, 0.7)">
+                A comprehensive product management system for retail and
+                e-commerce applications. Manage your inventory, products, and
+                categories with ease.
+              </Typography>
+            </Stack>
+
+            {/* Quick Links */}
+            <Stack spacing={2} sx={{ minWidth: { xs: '100%', md: '200px' } }}>
+              <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+                Quick Links
+              </Typography>
+              <Link
+                href={ROUTES.PRODUCTS}
+                style={{
+                  textDecoration: 'none',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    '&:hover': {
+                      color: colors.blue,
+                      transition: 'color 0.2s',
+                    },
+                  }}
+                >
+                  Products
+                </Typography>
+              </Link>
+              <Link
+                href={ROUTES.PRODUCT_CREATE}
+                style={{
+                  textDecoration: 'none',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    '&:hover': {
+                      color: colors.blue,
+                      transition: 'color 0.2s',
+                    },
+                  }}
+                >
+                  Create Product
+                </Typography>
+              </Link>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Box>
+    </Box>
   )
 }
 

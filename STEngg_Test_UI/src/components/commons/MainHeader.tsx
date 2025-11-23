@@ -2,99 +2,182 @@
 
 // ** Next & React Imports
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 
 // ** Constant Imports
 import { colors } from '@/constants/color'
 import { ROUTES } from '@/constants/routes'
 
 // ** MUI Imports
-import { AppBar, Button, Stack, Toolbar } from '@mui/material'
-
-// ** Custom Component Imports
-import CustomImage from './CustomImage'
-import HamburgerMenu from './HamburgerMenu'
+import {
+  Close as CloseIcon,
+  Inventory2 as InventoryIcon,
+  Menu as MenuIcon,
+} from '@mui/icons-material'
+import {
+  AppBar,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
 const MainHeader = () => {
-  const [isAtTop, setIsAtTop] = useState(true)
+  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop
-      setIsAtTop(scrollTop <= 20)
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
+  const navItems = [{ label: 'Products', href: ROUTES.PRODUCTS }]
+
+  const isActive = (href: string) => {
+    if (href === ROUTES.PRODUCTS) {
+      return pathname?.startsWith('/products') || false
     }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll() // Check initial position
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    return pathname === href
+  }
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        width: '100%',
-        height: '100px',
-        maxWidth: '100vw',
-        mx: 'auto',
-        px: [3, 6],
-        backgroundColor: isAtTop ? 'transparent' : colors.white,
-        transition: 'all 0.3s ease-in-out',
-        top: 0,
-        left: 0,
-        right: 'auto',
-        zIndex: 1000,
-        boxShadow: isAtTop ? 'none' : '0px 4px 8px rgba(0, 0, 0, 0.1)',
-      }}
-    >
-      <Toolbar
+    <>
+      <AppBar
+        position="sticky"
+        elevation={0}
         sx={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '100%',
-          px: '0 !important',
+          backgroundColor: colors.white,
+          transition: 'all 0.3s ease-in-out',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          zIndex: 1200,
         }}
       >
-        <Link href={ROUTES.ROOT} title="Snowkiting in Norway">
-          <CustomImage
-            priority
-            src=""
-            alt="Logo"
-            width={68}
-            height={63}
-            style={{ cursor: 'pointer' }}
-          />
-        </Link>
+        <Toolbar
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            py: 2,
+            px: { xs: 2, md: 4 },
+            maxWidth: '1400px',
+            width: '100%',
+          }}
+        >
+          {/* Logo/Brand */}
+          <Link href={ROUTES.PRODUCTS} style={{ textDecoration: 'none' }}>
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <InventoryIcon
+                sx={{
+                  fontSize: 32,
+                  color: colors.blue,
+                  transition: 'color 0.3s ease-in-out',
+                }}
+              />
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                sx={{
+                  color: colors.black,
+                  transition: 'color 0.3s ease-in-out',
+                  display: { xs: 'none', sm: 'block' },
+                }}
+              >
+                Product Manager
+              </Typography>
+            </Stack>
+          </Link>
 
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Stack
-            display={['none', 'flex']}
-            direction="row"
-            alignItems="center"
-            spacing={3}
+          {/* Mobile Menu Button */}
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{
+              display: { md: 'none' },
+              color: colors.black,
+            }}
           >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 280,
+            pt: 2,
+          },
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', px: 2, pb: 1 }}>
+          <IconButton onClick={handleDrawerToggle}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <List>
+          {navItems.map(item => (
+            <ListItem key={item.href} disablePadding>
+              <ListItemButton
+                component={Link}
+                href={item.href}
+                onClick={handleDrawerToggle}
+                selected={isActive(item.href)}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(0, 174, 239, 0.1)',
+                    borderLeft: `3px solid ${colors.blue}`,
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontWeight: isActive(item.href) ? 600 : 400,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <ListItem disablePadding sx={{ mt: 2, px: 2 }}>
             <Button
-              onClick={() => {}}
-              variant="outlined"
+              component={Link}
+              href={ROUTES.PRODUCT_CREATE}
+              variant="contained"
+              fullWidth
+              onClick={handleDrawerToggle}
               sx={{
-                width: 'max-content',
-                height: '40px',
-                color: colors.black,
-                borderColor: colors.black,
-                fontSize: '16px',
-                fontWeight: 'bold',
-                lineHeight: '16px',
+                backgroundColor: colors.blue,
+                color: colors.white,
+                '&:hover': {
+                  backgroundColor: '#0099CC',
+                },
+                fontWeight: 600,
+                py: 1.5,
               }}
             >
-              Ask us
+              + New Product
             </Button>
-          </Stack>
-          <HamburgerMenu />
-        </Stack>
-      </Toolbar>
-    </AppBar>
+          </ListItem>
+        </List>
+      </Drawer>
+    </>
   )
 }
 

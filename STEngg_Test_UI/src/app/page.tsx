@@ -1,22 +1,17 @@
-// ** MUI Imports
-import { Stack } from '@mui/material'
+'use client'
 
-// ** Constants Imports
-import { colors } from '@/constants/color'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/constants/routes'
 
 const Home = () => {
-  return (
-    <Stack
-      alignItems="center"
-      sx={{
-        width: '100%',
-        position: 'relative',
-        backgroundColor: colors.lightGray,
-      }}
-    >
-      Hello World
-    </Stack>
-  )
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push(ROUTES.PRODUCTS)
+  }, [router])
+
+  return null
 }
 
 export default Home

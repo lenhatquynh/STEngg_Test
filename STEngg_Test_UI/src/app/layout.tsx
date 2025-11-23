@@ -22,7 +22,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={barlowSemiCondensedFont.className}>
         <ClientProviders>
           <MainHeader />
-          <Stack component="main" flex={1}>
+          <Stack component="main" flex={1} py={4}>
             {children}
           </Stack>
           <MainFooter />
